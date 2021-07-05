@@ -1,0 +1,140 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/AikaV3rm/UiLib/master/Lib.lua')))()
+local w = library:CreateWindow("Developer Simulator")
+local b = w:CreateFolder("AutoFarm")
+local c = w:CreateFolder("AutoBuy")
+local e = w:CreateFolder("Mix")
+local u = w:CreateFolder("Credits")
+
+selectedarea ="Area_Spawn"
+area = {}
+for i,v in pairs(game:GetService("Workspace").Areas:GetChildren()) do
+    if not table.find(area,v.Name) then
+        table.insert(area,v.Name)
+    end
+end
+
+b:Toggle("Make",function(bool)
+    shared.toggle = bool
+    automake = bool
+end)
+
+b:Dropdown("Select Area",area,true,function(blubb)
+    selectedarea = blubb
+end)
+
+b:Button("Activate NoClip",function()
+    game:GetService('RunService').Stepped:connect(function()
+        game.Players.LocalPlayer.Character.Humanoid:ChangeState(11)
+    end)
+end)
+
+b:Toggle("Collect PCs",function(bool)
+    shared.toggle = bool
+    autopc = bool
+end)
+
+b:Toggle("Create Games",function(bool)
+    shared.toggle = bool
+    autocreate = bool
+end)
+
+b:Toggle("Sponsor",function(bool)
+    shared.toggle = bool
+    autosponsor = bool
+end)
+
+c:Dropdown("Select Box",{"Box1","Box2","Box3","Box4"},true,function(mob)
+    boxselect = mob
+end)
+
+c:Toggle("Open Box",function(bool)
+    shared.toggle = bool
+    autobox = bool
+end)
+
+c:Toggle("Workers",function(bool)
+    shared.toggle = bool
+    autoworkers = bool
+end)
+
+e:Toggle("AntiAfk",function(bool)
+    shared.toggle = bool
+    AntiAfk = bool
+end)
+
+--Credits
+u:Button("Moepi#1149",function()
+    setclipboard("Moepi#1149")
+end)
+
+u:Button("Discrod Server",function()
+    setclipboard("https://discord.gg/K4txdRSVfq")
+end)
+
+while wait() do
+
+    spawn(function()
+        if automake == true then
+            for i,v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.Makers:GetChildren()) do
+                if v.ClassName == "ImageLabel" then
+                    game:GetService("ReplicatedStorage").Remotes.Make:FireServer(v.Name)
+                    wait(0.6)
+                end
+            end
+        end
+    end)
+
+    spawn(function()
+        if autocreate == true then
+            firesignal(game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.GameCreatorMenu.Create.Shadow.TextButton.MouseButton1Click)
+            wait(0.7)
+        end
+    end)
+
+    spawn(function()
+        if autopc == true then
+            for i,v in pairs(game:GetService("Workspace").Areas[selectedarea]:GetDescendants()) do
+                if v.ClassName == "ProximityPrompt" then
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(v.Parent.CFrame.Position + Vector3.new(0,-12,0))
+                    fireproximityprompt(v,0)
+                    fireproximityprompt(v,1)
+                end
+            end
+        end
+    end)
+
+    spawn(function()
+        if autosponsor == true then
+            game:GetService("ReplicatedStorage").Remotes.Sponsor:FireServer()
+        end
+    end)
+
+    spawn(function()
+        if autobox == true then
+            game:GetService("ReplicatedStorage").Remotes.OpenBox:InvokeServer(boxselect)
+            wait(0.5)
+        end
+    end)
+
+    spawn(function()
+        if autoworkers == true then
+            for i,v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.WorkersMenu.ScrollingFrame:GetDescendants()) do
+                if v.ClassName == "TextButton" then
+                    firesignal(v.MouseButton1Click)
+                    wait(0.6)
+                end
+            end
+        end
+    end)
+
+    spawn(function()
+        if AntiAfk == true then
+            local vu = game:GetService("VirtualUser")
+            game:GetService("Players").LocalPlayer.Idled:connect(function()
+            vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+            wait(1)
+            vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+            end)
+        end
+    end)
+end
